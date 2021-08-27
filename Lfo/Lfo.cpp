@@ -31,8 +31,35 @@ void Lfo::setDivision(unsigned char newDiv)
 	divMult_ = pgm_read_word(&(LFO_MULT[division_]));
 	divBs_ = pgm_read_byte(&(LFO_BS[division_]));
 }
+// rio: lfo additions
+void Lfo::setPreDelay(unsigned char newValue)
+{
+	predelay_ = newValue;
+}
+void Lfo::setAttack(unsigned char newValue)
+{
+	attack_ = newValue;
+}
+void Lfo::resetCounter()
+{
+	// reset pre + output
+	if (predelaycc_ > 0) {
+		predelaycc_ = 0;
+		output_ = 0;
+	}
+
+	// reset att
+	if (attackcc_ > 0)
+		attackcc_ = 0;
+}
 void Lfo::refresh(unsigned int cycleTick)
 {
+	// inc predelay counter
+	if (predelaycc_ < predelay_) {
+		predelaycc_++;
+		return;
+	}
+
 	index_ = ((unsigned long)cycleTick * divMult_) >> divBs_;
 	index_ &= LFO_BIT_MASK;
 	output_ = pgm_read_byte(&(LFO_WAVETABLE[table_][index_]));
@@ -40,4 +67,11 @@ void Lfo::refresh(unsigned int cycleTick)
 	{
 		output_ *= -1;
 	}
+
+	// simple ramp up (att)
+	if (attackcc_ < attack_) {
+		output_ = attackcc_ * output_ / attack_;
+		attackcc_++;
+	}
 }
+// rio: lfo additions end

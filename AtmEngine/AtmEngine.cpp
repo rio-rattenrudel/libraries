@@ -173,6 +173,10 @@ void AtmEngine::triggerNote(unsigned char note)
 	portamento_.setInput(pgm_read_word(&(MIDI_FREQS[note])));
 	ampEnvelope_.trigger();
 	filtEnvelope_.trigger();
+
+	// rio: lfo additions
+	if (!lfoSync_ || totNotesOnLast_ == 0)
+		lfo_.resetCounter();
 }
 void AtmEngine::releaseNote()
 {
@@ -485,6 +489,12 @@ void AtmEngine::midiControlChangeReceived(unsigned char cc, unsigned char val)
 		case CC_CRUSHPREFILT:
 		patch_->setOptionValue(FUNC_BITCRUSH,(bool)(val>>6));
 		break;
+		case CC_LFODLY:	// rio: lfo additions
+		patch_->setCtrlValue(HIGH,CTRL_FILT,val<<1);
+		break;
+		case CC_LFOATT: // rio: lfo additions
+		patch_->setCtrlValue(HIGH,CTRL_Q,val<<1);
+		break;
 		case CC_AMPENVR:
 		patch_->setFunctionValue(FUNC_AENVR,val>>3);
 		break;
@@ -602,7 +612,11 @@ void AtmEngine::arpeggiatorNoteEvent(unsigned char lastNote, unsigned char newNo
 		triggerNote(newNote);
 	}
 }
-
+// rio: lfo additions
+void AtmEngine::setLfoSync(bool lfoSync)
+{
+	lfoSync_ = lfoSync;
+}
 
 //****************************************patch events********************************************
 void AtmEngine::patchValueChanged(unsigned char func, unsigned char newValue)
@@ -709,12 +723,20 @@ void AtmEngine::patchCtrlChanged(unsigned char bank, unsigned char ctrl, unsigne
 	switch (ctrl)
 	{
 		case CTRL_FILT:
-		filter_.setFc(newValue);
-		tieControls(bank,ctrl);
+		if(bank==LOW) {
+			filter_.setFc(newValue);	// rio: lfo additions
+		} else {
+			lfo_.setPreDelay(newValue);
+			//tieControls(bank,ctrl);
+		}
 		break;
 		case CTRL_Q:
-		filter_.setQ(newValue);
-		tieControls(bank,ctrl);
+		if(bank==LOW) {
+			filter_.setQ(newValue);		// rio: lfo additions
+		} else {
+			lfo_.setAttack(newValue);
+			//tieControls(bank,ctrl);
+		}
 		break;
 		case CTRL_ENV:
 		if(bank==LOW)

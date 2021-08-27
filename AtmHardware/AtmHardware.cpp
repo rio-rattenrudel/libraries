@@ -141,6 +141,7 @@ void AtmHardware::construct(AtmHardwareBase* base)
 	
 	midiThru_ = eeprom_read_byte((uint8_t*)MIDI_CHANNEL_ADDRESS) & MIDI_THRU_ON;
 	midiProgChangeEn_ = eeprom_read_byte((uint8_t*)MIDI_CHANNEL_ADDRESS) & MIDI_PROGCHEN_ON;
+	lfoSync_ = eeprom_read_byte((uint8_t*)MIDI_CHANNEL_ADDRESS) & LFO_SYNC_ON;	// rio: lfo additions
 	midiChannel_ = eeprom_read_byte((uint8_t*)MIDI_CHANNEL_ADDRESS) & 0x0F;
 	
 	if(midiChannelSelectMode_==true)
@@ -149,7 +150,7 @@ void AtmHardware::construct(AtmHardwareBase* base)
 		rotEncoder_[FUNCTION].setValue((char)midiChannel_);
 		ledSwitch_[FUNCTION].setColour(LedRgb::OFF);
 		
-		rotEncoder_[VALUE].setMaxValue(2);
+		rotEncoder_[VALUE].setMaxValue(3);	// rio: lfo additions
 		rotEncoder_[VALUE].setValue(0);
 		
 		ledSwitch_[BANK].setColour(LedRgb::OFF);
@@ -309,6 +310,15 @@ void AtmHardware::pollSwitches(unsigned char ticksPassed)
 					{
 						midiProgChangeEn_ = MIDI_PROGCHEN_ON;
 					}
+					case GLOBAL_LFOSYNC:	// rio: lfo additions
+					if(lfoSync_ ==LFO_SYNC_ON)
+					{
+						lfoSync_ = 0;
+					}
+					else
+					{
+						lfoSync_ = LFO_SYNC_ON;
+					}
 					break;
 				}
 				writeMidiSettings();
@@ -362,6 +372,16 @@ void AtmHardware::refreshGlobal()
 		break;
 		case GLOBAL_PROGCHANGE:  //prog change enable
 		if (midiProgChangeEn_==MIDI_PROGCHEN_ON)
+		{
+			ledSwitch_[VALUE].setColour(LedRgb::RED);
+		}
+		else
+		{
+			ledSwitch_[VALUE].setColour(LedRgb::YELLOW);
+		}
+		break;
+		case GLOBAL_LFOSYNC:	// rio: lfo additions
+		if (lfoSync_==LFO_SYNC_ON)
 		{
 			ledSwitch_[VALUE].setColour(LedRgb::RED);
 		}
@@ -427,7 +447,7 @@ void AtmHardware::flushMidi()
 
 void AtmHardware::writeMidiSettings()
 {
-	eeprom_update_byte((uint8_t*)MIDI_CHANNEL_ADDRESS,(midiChannel_ | midiThru_ | midiProgChangeEn_));
+	eeprom_update_byte((uint8_t*)MIDI_CHANNEL_ADDRESS,(midiChannel_ | midiThru_ | midiProgChangeEn_ | lfoSync_));	// rio: lfo additions
 }
 
 void AtmHardware::beginSpi()

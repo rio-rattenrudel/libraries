@@ -25,6 +25,10 @@ class Lfo
 public:
 protected:
 private:
+	unsigned char predelay_ = 0;	// rio: lfo additions
+	unsigned char predelaycc_ = 0;	// rio: lfo additions
+	unsigned char attack_ = 0;		// rio: lfo additions
+	unsigned char attackcc_ = 0;	// rio: lfo additions
 	unsigned char division_ = 2;
 	unsigned int divMult_ = 1;
 	unsigned char divBs_ = 4;
@@ -37,6 +41,9 @@ public:
 	Lfo();
 	~Lfo();
 	void setDivision(unsigned char newDiv);
+	void setPreDelay(unsigned char newValue);	// rio: lfo additions
+	void setAttack(unsigned char newValue);		// rio: lfo additions
+	void resetCounter();						// rio: lfo additions
 	unsigned char getDivision(){return division_;}
 	void setTable(unsigned char newTable){table_ = newTable;}
 	unsigned char getTable(){return table_;}

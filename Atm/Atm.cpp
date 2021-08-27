@@ -37,6 +37,7 @@ void Atm::initialize()
 		engine_.initialize();
 		engine_.getMidiPtr()->setChannel(hardware_.getMidiChannel());
 		engine_.getMidiPtr()->setProgChangeEnable(hardware_.getMidiProgChEn());
+		engine_.setLfoSync(hardware_.getLfoSync());	// rio: lfo additions
 		for(unsigned char i=0;i<2;++i)
 		{
 			hardware_.getLedSwitch(i).flash(4,LED_FLASH_TICKS,LED_FLASH_TICKS,LedRgb::RED,LedRgb::GREEN,true);

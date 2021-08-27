@@ -102,6 +102,8 @@ class AtmEngine : public MidiBase, ArpeggiatorBase, AtmPatchBase
 		CC_ARPPINGPONG = 40,
 		CC_PROPPORTA = 41,
 		CC_CRUSHPREFILT = 42,
+		CC_LFODLY = 50,	// rio: lfo additions
+		CC_LFOATT = 51,	// rio: lfo additions
 		CC_AMPENVR = 72,
 		CC_AMPENVA = 73,
 		CC_FILTCUTOFF = 74,
@@ -172,6 +174,7 @@ class AtmEngine : public MidiBase, ArpeggiatorBase, AtmPatchBase
 	bool sysexMemdumping_ = false;
 	unsigned char sysexMemdumpnum_ = 0;
 	bool sysexComplete_ = false;
+	bool lfoSync_ = false;	// rio: lfo additions
 	//functions
 	public:
 	void construct(AtmEngineBase* base);
@@ -205,6 +208,7 @@ class AtmEngine : public MidiBase, ArpeggiatorBase, AtmPatchBase
 	void writeSysexPatch(unsigned char patchNum);
 	void writeSysexMemDump();
 	void arpeggiatorNoteEvent(unsigned char lastNote, unsigned char newNote);
+	void setLfoSync(bool lfoSync); // rio: lfo additions
 	protected:
 	private:
 	AtmEngine(AtmEngineBase* base);

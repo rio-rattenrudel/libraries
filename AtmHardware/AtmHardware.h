@@ -117,7 +117,8 @@ class AtmHardware
 	enum GlobalParameter : unsigned char
 	{
 		GLOBAL_MIDITHRU,
-		GLOBAL_PROGCHANGE
+		GLOBAL_PROGCHANGE,
+		GLOBAL_LFOSYNC	// rio: lfo additions
 	};
 	
 	protected:
@@ -132,9 +133,11 @@ class AtmHardware
 	bool midiChannelSelectMode_ = false;
 	static const unsigned char MIDI_THRU_ON = 0x80;
 	static const unsigned char MIDI_PROGCHEN_ON = 0x40;
+	static const unsigned char LFO_SYNC_ON = 0x20;	// rio: lfo additions
 	unsigned char midiThru_ = 0;
 	unsigned char midiChannel_ = 0;
 	unsigned char midiProgChangeEn_ = 0;
+	unsigned char lfoSync_ = 0;	// rio: lfo additions
 	unsigned char ledFlashTickCnt = 0;
 	//functions
 	
@@ -160,6 +163,7 @@ class AtmHardware
 	bool getMidiChannelSelectMode() {return midiChannelSelectMode_;}
 	unsigned char getMidiChannel(){return midiChannel_;}
 	bool getMidiProgChEn(){return (bool)midiProgChangeEn_;}
+	bool getLfoSync(){return (bool)lfoSync_;}	// rio: lfo additions
 	void refreshLeds();
 	void refreshFlash(unsigned char ticksPassed);
 	void pollAnlControls(unsigned char ticksPassed);
