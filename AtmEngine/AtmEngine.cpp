@@ -175,7 +175,7 @@ void AtmEngine::triggerNote(unsigned char note)
 	filtEnvelope_.trigger();
 
 	// rio: lfo additions
-	if (!lfoSync_ || totNotesOnLast_ == 0)
+	if (arpeggiator_->getType()==0 && (!lfoSync_ || totNotesOnLast_ == 0))
 		lfo_.resetCounter();
 }
 void AtmEngine::releaseNote()
@@ -606,7 +606,10 @@ void AtmEngine::arpeggiatorNoteEvent(unsigned char lastNote, unsigned char newNo
 	if(lastNote>0)
 	{
 		releaseNote();
+	} else {
+		lfo_.resetCounter(); // rio: lfo additions
 	}
+
 	if(newNote>0)
 	{
 		triggerNote(newNote);
