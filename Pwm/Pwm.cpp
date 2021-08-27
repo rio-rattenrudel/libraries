@@ -52,7 +52,7 @@ void Pwm::processWavetable(Wavetable& sourceWavetable, char envLevel, char lfoLe
 		}
 		for(unsigned char i=0;i<offset;++i)
 		{
-			sourceWavetable.setSample(i,0);
+			sourceWavetable.setSample(i,127);	// rio: pwm correction
 		}
 	}
 }
