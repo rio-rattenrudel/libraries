@@ -49,14 +49,19 @@ void Lfo::resetCounter()
 	}
 
 	// reset att
-	if (attackcc_ > 0)
+	if (attackcc_ > 0) {
 		attackcc_ = 0;
+		timeCC = 0;
+	}
 }
 void Lfo::refresh(unsigned int cycleTick)
 {
+	timegap = cycleTick - timestart;
+	timestart = cycleTick;
+
 	// inc predelay counter
-	if (predelaycc_ < predelay_) {
-		predelaycc_++;
+	if (predelaycc_ < predelay_ << 3) {
+		predelaycc_ += timegap;
 		return;
 	}
 
@@ -68,10 +73,15 @@ void Lfo::refresh(unsigned int cycleTick)
 		output_ *= -1;
 	}
 
-	// simple ramp up (att)
+	// simple ramping according to time (att)
 	if (attackcc_ < attack_) {
 		output_ = attackcc_ * output_ / attack_;
-		attackcc_++;
+
+		timeCC += timegap;
+		if (timeCC > 127) {
+			timeCC = 0;
+			attackcc_++;
+		}
 	}
 }
 // rio: lfo additions end
