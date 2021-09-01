@@ -25,9 +25,9 @@ class Lfo
 public:
 protected:
 private:
-	unsigned int timegap = 0;		// rio: lfo additions
-	unsigned int timestart = 0;		// rio: lfo additions
-	unsigned int timeCC = 0;		// rio: lfo additions
+	unsigned int timegap_ = 0;		// rio: lfo additions
+	unsigned int timestart_ = 0;	// rio: lfo additions
+	unsigned int timeCC_ = 0;		// rio: lfo additions
 	unsigned char predelay_ = 0;	// rio: lfo additions
 	unsigned int predelaycc_ = 0;	// rio: lfo additions
 	unsigned char attack_ = 0;		// rio: lfo additions

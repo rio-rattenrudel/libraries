@@ -51,17 +51,18 @@ void Lfo::resetCounter()
 	// reset att
 	if (attackcc_ > 0) {
 		attackcc_ = 0;
-		timeCC = 0;
+		timeCC_ = 0;
 	}
 }
 void Lfo::refresh(unsigned int cycleTick)
 {
-	timegap = cycleTick - timestart;
-	timestart = cycleTick;
+	// calc timing
+	timegap_ = cycleTick - timestart_;
+	timestart_ = cycleTick;
 
 	// inc predelay counter
 	if (predelaycc_ < predelay_ << 3) {
-		predelaycc_ += timegap;
+		predelaycc_ += timegap_;
 		return;
 	}
 
@@ -77,9 +78,9 @@ void Lfo::refresh(unsigned int cycleTick)
 	if (attackcc_ < attack_) {
 		output_ = attackcc_ * output_ / attack_;
 
-		timeCC += timegap;
-		if (timeCC > 127) {
-			timeCC = 0;
+		timeCC_ += timegap_;
+		if (timeCC_ > 127) {
+			timeCC_ = 0;
 			attackcc_++;
 		}
 	}
